@@ -2,7 +2,6 @@ from datetime import datetime
 from .database import db
 
 
-# Marks and remarks given by the examiner for one booking
 class Evaluation(db.Model):
     __tablename__ = 'evaluations'
 

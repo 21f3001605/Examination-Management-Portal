@@ -1,7 +1,6 @@
 from .database import db
 
 
-# Name, email and status of the student are stored in the users table
 class StudentProfile(db.Model):
     __tablename__ = 'student_profiles'
 

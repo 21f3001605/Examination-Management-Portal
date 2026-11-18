@@ -1,6 +1,5 @@
 from .database import db
 
-# Which examiners are assigned to which examination (many-to-many)
 exam_examiners = db.Table(
     'exam_examiners',
     db.Column('exam_id', db.Integer, db.ForeignKey('examinations.id'), primary_key=True),

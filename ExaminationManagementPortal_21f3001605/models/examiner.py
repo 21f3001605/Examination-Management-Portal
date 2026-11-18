@@ -1,7 +1,6 @@
 from .database import db
 
 
-# Name and status of the examiner are stored in the users table
 class ExaminerProfile(db.Model):
     __tablename__ = 'examiner_profiles'
 

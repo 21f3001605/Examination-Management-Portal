@@ -2,7 +2,6 @@ from datetime import datetime
 from .database import db
 
 
-# Bookings are never deleted, cancelling only changes the status (keeps history)
 class Booking(db.Model):
     __tablename__ = 'bookings'
 

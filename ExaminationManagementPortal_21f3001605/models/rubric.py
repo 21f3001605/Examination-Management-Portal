@@ -1,7 +1,6 @@
 from .database import db
 
 
-# One marking criterion of an examination
 class Rubric(db.Model):
     __tablename__ = 'rubrics'
 

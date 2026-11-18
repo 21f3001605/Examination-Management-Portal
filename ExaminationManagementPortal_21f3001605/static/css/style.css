@@ -1,0 +1,19 @@
+body {
+  background-color: #f4f6f9;
+}
+
+.navbar a {
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+table {
+  background-color: white;
+}
+
+th {
+  background-color: #e9ecef;
+}

@@ -1,4 +1,3 @@
-# Importing every model here lets other files write: from models import db, User, Course
 from .database import db
 from .user import User
 from .examiner import ExaminerProfile
