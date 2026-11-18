@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Examiners</h2>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Department</th><th>Assigned exams</th><th>Status</th><th>Action</th></tr>
+  {% for u in examiners %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.name }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.examiner_profile.phone }}</td>
+    <td>{{ u.examiner_profile.department }}</td>
+    <td>{% for e in u.examiner_profile.assigned_exams %}{{ e.name }}<br>{% endfor %}</td>
+    <td><span class="badge {{ 'bg-success' if u.status == 'active' else 'bg-warning text-dark' if u.status == 'pending' else 'bg-secondary' }}">{{ u.status }}</span></td>
+    <td>
+      <form method="POST" action="{{ url_for('admin.examiner_status', user_id=u.id) }}">
+        {% if u.status == 'active' %}
+          <button class="btn btn-sm btn-danger" name="status" value="inactive">Deactivate</button>
+        {% else %}
+          <button class="btn btn-sm btn-success" name="status" value="active">Approve</button>
+        {% endif %}
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="text-center text-muted">No examiners yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

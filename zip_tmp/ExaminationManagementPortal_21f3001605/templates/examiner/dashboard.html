@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Examiner Dashboard</h2>
+
+<div class="row mb-4">
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ exams|length }}</h1><p class="text-muted mb-0">Assigned exams</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ slots|length }}</h1><p class="text-muted mb-0">Created slots</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ booked_count }}</h1><p class="text-muted mb-0">Students booked</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ pending|length }}</h1><p class="text-muted mb-0">Pending evaluations</p></div></div></div>
+</div>
+
+<h4>Assigned Examinations</h4>
+<table class="table table-bordered">
+  <tr><th>Exam</th><th>Course</th><th>Type</th><th>Slot creation</th><th>Status</th><th>Action</th></tr>
+  {% for e in exams %}
+  <tr>
+    <td>{{ e.name }}</td>
+    <td>{{ e.course.code }}</td>
+    <td>{{ e.exam_type }}</td>
+    <td>{{ e.slot_creation_start }} → {{ e.slot_creation_end }}</td>
+    <td>{{ e.status }}</td>
+    <td>
+      {% if slot_creation_open(e) %}
+        <a href="{{ url_for('examiner.create_slot', exam_id=e.id) }}" class="btn btn-sm btn-dark">Create slot</a>
+      {% else %}
+        <span class="text-muted small">Slot creation closed</span>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No exams assigned yet</td></tr>
+  {% endfor %}
+</table>
+
+<h4>Pending Evaluations</h4>
+<table class="table table-bordered">
+  <tr><th>Student</th><th>Exam</th><th>Slot</th><th>Action</th></tr>
+  {% for b in pending %}
+  <tr>
+    <td>{{ b.student.user.name }} ({{ b.student.roll_no }})</td>
+    <td>{{ b.slot.examination.name }}</td>
+    <td>{{ b.slot.date }} {{ b.slot.start_time.strftime('%H:%M') }}</td>
+    <td><a href="{{ url_for('examiner.evaluate', booking_id=b.id) }}" class="btn btn-sm btn-dark">Evaluate</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="4" class="text-center text-muted">Nothing pending</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Search</h2>
+<form method="GET" class="d-flex gap-2 mb-4">
+  <input class="form-control" name="q" value="{{ q }}" placeholder="Name, ID or roll number" required>
+  <button class="btn btn-dark">Search</button>
+</form>
+
+{% if q %}
+<h5>Students & Examiners</h5>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
+  {% for u in users %}
+  <tr><td>{{ u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td>{{ u.status }}</td></tr>
+  {% else %}
+  <tr><td colspan="5" class="text-muted">No match</td></tr>
+  {% endfor %}
+</table>
+
+<h5>Examinations</h5>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Name</th><th>Course</th><th>Status</th></tr>
+  {% for e in exams %}
+  <tr><td>{{ e.id }}</td><td>{{ e.name }}</td><td>{{ e.course.code }}</td><td>{{ e.status }}</td></tr>
+  {% else %}
+  <tr><td colspan="4" class="text-muted">No match</td></tr>
+  {% endfor %}
+</table>
+
+<h5>Bookings</h5>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Student</th><th>Exam</th><th>Status</th></tr>
+  {% for b in bookings %}
+  <tr><td>{{ b.id }}</td><td>{{ b.student.user.name }}</td><td>{{ b.slot.examination.name }}</td><td>{{ b.status }}</td></tr>
+  {% else %}
+  <tr><td colspan="4" class="text-muted">No match</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

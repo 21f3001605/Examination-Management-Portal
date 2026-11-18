@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{{ url_for('examiner.slots') }}" class="btn btn-sm btn-secondary mb-3">← Back to slots</a>
+<h2>Booked Students</h2>
+<p class="text-muted">{{ slot.examination.name }} · {{ slot.date }} {{ slot.start_time.strftime('%H:%M') }} - {{ slot.end_time.strftime('%H:%M') }}</p>
+<table class="table table-bordered">
+  <tr><th>Booking ID</th><th>Student</th><th>Roll No</th><th>Status</th><th>Marks</th><th>Action</th></tr>
+  {% for b in bookings %}
+  <tr>
+    <td>{{ b.id }}</td>
+    <td>{{ b.student.user.name }}</td>
+    <td>{{ b.student.roll_no }}</td>
+    <td>{{ b.status }}</td>
+    <td>{{ b.evaluation.total_marks if b.evaluation else '-' }}</td>
+    <td><a href="{{ url_for('examiner.evaluate', booking_id=b.id) }}" class="btn btn-sm btn-dark">{{ 'Re-evaluate' if b.evaluation else 'Evaluate' }}</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No students booked yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

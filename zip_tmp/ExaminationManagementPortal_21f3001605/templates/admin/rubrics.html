@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{{ url_for('admin.exams') }}" class="btn btn-sm btn-secondary mb-3">← Back to exams</a>
+<h2>Rubrics: {{ exam.name }}</h2>
+<p class="text-muted">
+  {{ exam.course.code }} · {{ exam.exam_type }} ·
+  Rubric total: <strong>{{ total }} / {{ exam.max_marks }}</strong>
+  {% if total == exam.max_marks %}<span class="badge bg-success">Complete</span>
+  {% else %}<span class="badge bg-warning text-dark">{{ exam.max_marks - total }} marks left</span>{% endif %}
+</p>
+
+<!-- Assigned examiners -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>Assigned Examiners</h5>
+    <p>
+      {% for ex in exam.examiners %}
+        <span class="badge bg-secondary">{{ ex.user.name }}</span>
+      {% else %}
+        <span class="text-muted">No examiners assigned yet</span>
+      {% endfor %}
+    </p>
+    <form method="POST" action="{{ url_for('admin.assign_examiner', exam_id=exam.id) }}" class="d-flex gap-2">
+      <select class="form-select" name="examiner_id" required>
+        {% for u in examiners %}
+          <option value="{{ u.examiner_profile.id }}">{{ u.name }} ({{ u.examiner_profile.department }})</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-dark">Assign</button>
+    </form>
+  </div>
+</div>
+
+<!-- Add / Edit form -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>{{ 'Edit Criterion' if edit_rubric else 'Add Criterion' }}</h5>
+    <form method="POST"
+          action="{{ url_for('admin.edit_rubric', rubric_id=edit_rubric.id) if edit_rubric else url_for('admin.rubrics', exam_id=exam.id) }}">
+      <div class="row">
+        <div class="col-md-4 mb-2">
+          <input class="form-control" name="criterion" placeholder="Criterion (e.g. Concepts)"
+                 value="{{ edit_rubric.criterion if edit_rubric else '' }}" required>
+        </div>
+        <div class="col-md-2 mb-2">
+          <input class="form-control" type="number" min="1" name="max_marks" placeholder="Max marks"
+                 value="{{ edit_rubric.max_marks if edit_rubric else '' }}" required>
+        </div>
+        <div class="col-md-2 mb-2">
+          <input class="form-control" type="number" min="0" max="100" step="0.1" name="weightage" placeholder="Weightage %"
+                 value="{{ edit_rubric.weightage if edit_rubric else '' }}" required>
+        </div>
+        <div class="col-md-4 mb-2">
+          <input class="form-control" name="description" placeholder="Description"
+                 value="{{ edit_rubric.description if edit_rubric and edit_rubric.description else '' }}">
+        </div>
+      </div>
+      <button class="btn btn-dark">{{ 'Update' if edit_rubric else 'Add' }}</button>
+      {% if edit_rubric %}
+        <a href="{{ url_for('admin.rubrics', exam_id=exam.id) }}" class="btn btn-secondary">Cancel</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<!-- List -->
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Criterion</th><th>Max marks</th><th>Weightage</th><th>Description</th><th>Actions</th></tr>
+  {% for r in exam.rubrics %}
+  <tr>
+    <td>{{ r.id }}</td>
+    <td>{{ r.criterion }}</td>
+    <td>{{ r.max_marks }}</td>
+    <td>{{ r.weightage }}%</td>
+    <td>{{ r.description or '' }}</td>
+    <td>
+      <a href="{{ url_for('admin.edit_rubric', rubric_id=r.id) }}" class="btn btn-sm btn-warning">Edit</a>
+      <form method="POST" action="{{ url_for('admin.delete_rubric', rubric_id=r.id) }}" class="d-inline">
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No criteria yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

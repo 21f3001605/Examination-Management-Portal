@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Slots</h2>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Exam</th><th>Date</th><th>Time</th><th>Seats left</th><th>Status</th><th>Actions</th></tr>
+  {% for s in slots %}
+  <tr>
+    <td>{{ s.id }}</td>
+    <td>{{ s.examination.name }}</td>
+    <td>{{ s.date }}</td>
+    <td>{{ s.start_time.strftime('%H:%M') }} - {{ s.end_time.strftime('%H:%M') }}</td>
+    <td>{{ s.available_seats }} / {{ s.capacity }}</td>
+    <td><span class="badge {{ 'bg-success' if s.status == 'Available' else 'bg-danger' }}">{{ s.status }}</span></td>
+    <td>
+      <a href="{{ url_for('examiner.slot_students', slot_id=s.id) }}" class="btn btn-sm btn-info">Students</a>
+      {% if s.examination.status == 'Slot Creation' %}
+        <a href="{{ url_for('examiner.edit_slot', slot_id=s.id) }}" class="btn btn-sm btn-warning">Edit</a>
+        <form method="POST" action="{{ url_for('examiner.delete_slot', slot_id=s.id) }}" class="d-inline">
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="text-center text-muted">No slots yet. Create one from the dashboard.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

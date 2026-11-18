@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>All Bookings</h2>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Student</th><th>Exam</th><th>Slot</th><th>Examiner</th><th>Booked on</th><th>Status</th><th>Reschedule</th></tr>
+  {% for b in bookings %}
+  <tr>
+    <td>{{ b.id }}</td>
+    <td>{{ b.student.user.name }} ({{ b.student.roll_no }})</td>
+    <td>{{ b.slot.examination.name }}</td>
+    <td>#{{ b.slot.id }} · {{ b.slot.date }} {{ b.slot.start_time.strftime('%H:%M') }}</td>
+    <td>{{ b.slot.examiner.user.name }}</td>
+    <td>{{ b.booked_at.strftime('%Y-%m-%d') }}</td>
+    <td>{{ b.status }}</td>
+    <td>
+      {% if b.status == 'Booked' %}
+      <form method="POST" action="{{ url_for('admin.reschedule', booking_id=b.id) }}" class="d-flex gap-1">
+        <select class="form-select form-select-sm" name="slot_id">
+          {% for s in b.slot.examination.slots if s.id != b.slot_id and s.available_seats > 0 %}
+            <option value="{{ s.id }}">#{{ s.id }} · {{ s.date }} {{ s.start_time.strftime('%H:%M') }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-sm btn-dark">Move</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="text-center text-muted">No bookings yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

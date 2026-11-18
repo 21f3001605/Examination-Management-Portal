@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Courses</h2>
+
+<!-- Add / Edit form -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5>{{ 'Edit Course' if edit_course else 'Add Course' }}</h5>
+    <form method="POST"
+          action="{{ url_for('admin.edit_course', course_id=edit_course.id) if edit_course else url_for('admin.courses') }}">
+      <div class="row">
+        <div class="col-md-3 mb-2">
+          <input class="form-control" name="code" placeholder="Code (e.g. CS101)"
+                 value="{{ edit_course.code if edit_course else '' }}" required>
+        </div>
+        <div class="col-md-5 mb-2">
+          <input class="form-control" name="name" placeholder="Course name"
+                 value="{{ edit_course.name if edit_course else '' }}" required>
+        </div>
+        <div class="col-md-4 mb-2">
+          <select class="form-select" name="status">
+            <option value="active" {% if edit_course and edit_course.status == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if edit_course and edit_course.status == 'inactive' %}selected{% endif %}>Inactive</option>
+          </select>
+        </div>
+      </div>
+      <textarea class="form-control mb-2" name="description" placeholder="Description">{{ edit_course.description if edit_course and edit_course.description else '' }}</textarea>
+      <button class="btn btn-primary">{{ 'Update' if edit_course else 'Add' }}</button>
+      {% if edit_course %}
+        <a href="{{ url_for('admin.courses') }}" class="btn btn-secondary">Cancel</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<!-- List -->
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Code</th><th>Name</th><th>Status</th><th>Exams</th><th>Actions</th></tr>
+  {% for c in courses %}
+  <tr>
+    <td>{{ c.id }}</td>
+    <td>{{ c.code }}</td>
+    <td>{{ c.name }}</td>
+    <td><span class="badge {{ 'bg-success' if c.status == 'active' else 'bg-secondary' }}">{{ c.status }}</span></td>
+    <td>{{ c.examinations|length }}</td>
+    <td>
+      <a href="{{ url_for('admin.edit_course', course_id=c.id) }}" class="btn btn-sm btn-warning">Edit</a>
+      <form method="POST" action="{{ url_for('admin.delete_course', course_id=c.id) }}" class="d-inline">
+        <button class="btn btn-sm btn-danger">Delete</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No courses yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

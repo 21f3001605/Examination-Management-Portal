@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Student Dashboard</h2>
+
+<div class="row mb-4">
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ open_exams|length }}</h1><p class="text-muted mb-0">Exams open for booking</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ open_slots|length }}</h1><p class="text-muted mb-0">Available slots</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ upcoming|length }}</h1><p class="text-muted mb-0">Booked / upcoming</p></div></div></div>
+  <div class="col-md-3"><div class="card text-center"><div class="card-body"><h1>{{ results|length }}</h1><p class="text-muted mb-0">Published results</p></div></div></div>
+</div>
+
+<h4>Available Examinations</h4>
+<table class="table table-bordered">
+  <tr><th>Exam</th><th>Course</th><th>Type</th><th>Booking until</th><th>Free slots</th><th></th></tr>
+  {% for e in open_exams %}
+  <tr>
+    <td>{{ e.name }}</td>
+    <td>{{ e.course.code }}</td>
+    <td>{{ e.exam_type }}</td>
+    <td>{{ e.booking_end }}</td>
+    <td>{{ e.slots|selectattr('status', 'equalto', 'Available')|list|length }}</td>
+    <td><a href="{{ url_for('student.book', exam_id=e.id) }}" class="btn btn-sm btn-dark">View slots</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No exams open for booking right now</td></tr>
+  {% endfor %}
+</table>
+
+<h4>Upcoming Examinations (Booked Slots)</h4>
+<table class="table table-bordered">
+  <tr><th>Exam</th><th>Date</th><th>Time</th><th>Examiner</th></tr>
+  {% for b in upcoming %}
+  <tr>
+    <td>{{ b.slot.examination.name }}</td>
+    <td>{{ b.slot.date }}</td>
+    <td>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
+    <td>{{ b.slot.examiner.user.name }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="4" class="text-center text-muted">No upcoming exams</td></tr>
+  {% endfor %}
+</table>
+
+<h4>Published Results</h4>
+<table class="table table-bordered">
+  <tr><th>Exam</th><th>Marks</th><th>Remarks</th></tr>
+  {% for b in results %}
+  <tr>
+    <td>{{ b.slot.examination.name }}</td>
+    <td>{{ b.evaluation.total_marks }} / {{ b.slot.examination.max_marks }}</td>
+    <td>{{ b.evaluation.remarks or '' }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="3" class="text-center text-muted">No results yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

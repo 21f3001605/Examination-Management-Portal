@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Bookings & Schedule</h2>
+<table class="table table-bordered">
+  <tr><th>ID</th><th>Exam</th><th>Date</th><th>Time</th><th>Examiner</th><th>Booked on</th><th>Status</th><th></th></tr>
+  {% for b in bookings|reverse %}
+  <tr>
+    <td>{{ b.id }}</td>
+    <td>{{ b.slot.examination.name }}</td>
+    <td>{{ b.slot.date }}</td>
+    <td>{{ b.slot.start_time.strftime('%H:%M') }} - {{ b.slot.end_time.strftime('%H:%M') }}</td>
+    <td>{{ b.slot.examiner.user.name }}</td>
+    <td>{{ b.booked_at.strftime('%Y-%m-%d') }}</td>
+    <td><span class="badge {{ 'bg-primary' if b.status == 'Booked' else 'bg-success' if b.status == 'Completed' else 'bg-secondary' }}">{{ b.status }}</span></td>
+    <td>
+      {% if b.status == 'Booked' and today <= b.slot.examination.booking_end %}
+      <form method="POST" action="{{ url_for('student.cancel', booking_id=b.id) }}">
+        <button class="btn btn-sm btn-danger">Cancel</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8" class="text-center text-muted">No bookings yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

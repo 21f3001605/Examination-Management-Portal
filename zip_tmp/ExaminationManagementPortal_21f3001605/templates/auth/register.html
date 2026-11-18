@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-5 mx-auto">
+  <h3>Register</h3>
+  <form method="POST">
+    <input class="form-control mb-2" name="name" placeholder="Full name" required>
+    <input class="form-control mb-2" type="email" name="email" placeholder="Email" required>
+    <input class="form-control mb-2" type="password" name="password" placeholder="Password" minlength="4" required>
+    <select class="form-select mb-2" name="role">
+      <option value="student">Student</option>
+      <option value="examiner">Examiner</option>
+    </select>
+    <p class="text-muted small mb-1">Students fill:</p>
+    <input class="form-control mb-2" name="roll_no" placeholder="Roll number">
+    <p class="text-muted small mb-1">Examiners fill:</p>
+    <input class="form-control mb-2" name="department" placeholder="Department">
+    <input class="form-control mb-2" name="phone" placeholder="Phone">
+    <button class="btn btn-dark w-100">Register</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-7 mx-auto">
+  <h3>Evaluate: {{ booking.student.user.name }} ({{ booking.student.roll_no }})</h3>
+  <p class="text-muted">{{ exam.name }} · Max marks {{ exam.max_marks }}</p>
+
+  {% if not exam.rubrics %}
+    <div class="alert alert-warning">No rubrics defined for this exam yet. Ask the admin to add them.</div>
+  {% else %}
+  <form method="POST">
+    <table class="table table-bordered">
+      <tr><th>Criterion</th><th>Description</th><th>Marks</th></tr>
+      {% for r in exam.rubrics %}
+      <tr>
+        <td>{{ r.criterion }}</td>
+        <td class="small text-muted">{{ r.description or '' }}</td>
+        <td class="d-flex align-items-center gap-1">
+          <input class="form-control" type="number" step="0.5" min="0" max="{{ r.max_marks }}"
+                 name="rubric_{{ r.id }}" value="{{ old_marks.get(r.id, '') }}" required>
+          <span>/ {{ r.max_marks }}</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <label class="form-label">Remarks</label>
+    <textarea class="form-control mb-3" name="remarks" rows="3">{{ booking.evaluation.remarks if booking.evaluation and booking.evaluation.remarks else '' }}</textarea>
+    <button class="btn btn-dark">Submit marks</button>
+    <a href="{{ url_for('examiner.slot_students', slot_id=booking.slot_id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

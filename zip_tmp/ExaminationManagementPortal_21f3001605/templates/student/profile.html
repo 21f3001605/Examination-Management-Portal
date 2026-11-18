@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-5 mx-auto">
+  <h3>My Profile</h3>
+  <form method="POST">
+    <label class="form-label">Name</label>
+    <input class="form-control mb-2" name="name" value="{{ current_user.name }}" required>
+    <label class="form-label">Email</label>
+    <input class="form-control mb-2" value="{{ current_user.email }}" disabled>
+    <label class="form-label">Roll number</label>
+    <input class="form-control mb-2" value="{{ current_user.student_profile.roll_no }}" disabled>
+    <label class="form-label">New password (leave blank to keep)</label>
+    <input class="form-control mb-3" type="password" name="password" minlength="4">
+    <button class="btn btn-dark">Save</button>
+  </form>
+</div>
+{% endblock %}

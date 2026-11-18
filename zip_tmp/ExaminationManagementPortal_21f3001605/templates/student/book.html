@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<a href="{{ url_for('student.exams') }}" class="btn btn-sm btn-secondary mb-3">← Back to exams</a>
+<h2>{{ exam.name }}</h2>
+<p class="text-muted">{{ exam.course.code }} · {{ exam.exam_type }} · {{ exam.duration_min }} min · Booking {{ exam.booking_start }} → {{ exam.booking_end }}</p>
+
+{% if already_booked %}
+  <div class="alert alert-info">You have already booked a slot for this exam. See My Bookings.</div>
+{% elif not is_open %}
+  <div class="alert alert-warning">Booking is not open for this exam right now.</div>
+{% endif %}
+
+<table class="table table-bordered">
+  <tr><th>Date</th><th>Time</th><th>Examiner</th><th>Seats left</th><th>Status</th><th></th></tr>
+  {% for s in exam.slots %}
+  <tr>
+    <td>{{ s.date }}</td>
+    <td>{{ s.start_time.strftime('%H:%M') }} - {{ s.end_time.strftime('%H:%M') }}</td>
+    <td>{{ s.examiner.user.name }}</td>
+    <td>{{ s.available_seats }} / {{ s.capacity }}</td>
+    <td><span class="badge {{ 'bg-success' if s.status == 'Available' else 'bg-danger' }}">{{ s.status }}</span></td>
+    <td>
+      {% if is_open and not already_booked and s.status == 'Available' %}
+      <form method="POST" action="{{ url_for('student.book_slot', slot_id=s.id) }}">
+        <button class="btn btn-sm btn-dark">Book</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">No slots created yet</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
